@@ -1,6 +1,8 @@
 # PyXymon
 
-PyXymon is a simple Python module that helps write xymon external scripts. It will render the message you want to display and send it to your xymon server. PyXymon read the required informations from the xymon environment variables, so you do not need to add any extra configuration file.
+PyXymon is a simple Python module that can help you write Xymon external scripts in Python.
+PyXymon provides some methods for rendering the messages you want to display in the Xymon web page and for sending them to the Xymon server.
+PyXymon reads the required informations from the Xymon environment variables, so you do not need to add any extra configuration file.
 
 # Installation
 
@@ -55,3 +57,5 @@ Configure your extention module in the file `$XYMONCLIENTHOME/etc/xymonclient.cf
         LOGFILE $XYMONCLIENTLOGS/yourcheck.log
         INTERVAL 10m
 ```
+
+You can find a full example [here](example/bb-pacemaker.py).
