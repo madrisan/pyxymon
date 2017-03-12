@@ -36,7 +36,8 @@ def run_check():
     # The default criticity is 'xymon.msg.OK' 
     
     xymon.msg.title('Title in the xymon check page')
-    xymon.msg.section('Section containing the lines you need to display')
+    xymon.msg.section('Section Title', 'Text containing the lines you want to display')
+    # You can add here other sections, if required.
     xymon.msg.footer(version)
     xymon.send()
 
