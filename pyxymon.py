@@ -4,6 +4,7 @@
 '''
 Python boilerplate code for Xymon modules
 Copyright (C) 2017 Davide Madrisan <davide.madrisan.gmail.com>
+License: https://opensource.org/licenses/GPL-3.0
 '''
 
 from datetime import datetime
