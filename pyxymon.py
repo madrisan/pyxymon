@@ -21,7 +21,7 @@ class XymonMessage(object):
         self.__all_colors = [
             self.OK, self.WARNING, self.CRITICAL]
         self.message_color = self.OK
-        
+
     def __get_date(self):
         return datetime.now().strftime('%c')
 
