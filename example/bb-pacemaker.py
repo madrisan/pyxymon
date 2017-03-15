@@ -7,9 +7,7 @@ Copyright (C) 2017 Davide Madrisan <davide.madrisan.gmail.com>
 '''
 
 # Import python libs
-from xml.dom.minidom import parseString
 from pcs import (
-    resource,
     status,
     utils,
 )
