@@ -22,10 +22,12 @@ class XymonMessage(object):
             self.OK, self.WARNING, self.CRITICAL]
         self.message_color = self.OK
 
-    def __get_date(self):
+    @staticmethod
+    def __get_date():
         return datetime.now().strftime('%c')
 
-    def __get_machine(self):
+    @staticmethod
+    def __get_machine():
         return os.environ.get('MACHINE')
 
     def color(self, new_color):
