@@ -7,11 +7,11 @@ PyXymon is a simple Python module that can help you write Xymon external scripts
 PyXymon provides some methods for rendering the messages you want to display in the Xymon web page and for sending them to the Xymon server.
 PyXymon reads the required informations from the Xymon environment variables, so you do not need to add any extra configuration file.
 
-# Installation
+## Installation
 
 Just copy the module `pyxymon.py` in the xymon `ext` directory.
 
-# Usage
+## Usage
 
 Create a script `yourcheck.py` using the following schema:
 
@@ -63,3 +63,19 @@ Configure your extention module in the file `$XYMONCLIENTHOME/etc/xymonclient.cf
 ```
 
 You can find a full example [here](example/bb-pacemaker.py).
+
+## Note
+
+If you need to run your Python check with root privileges, just prefix the `CMD` directive in `xymonclient.cfg`
+with the `sudo` command:  
+
+        CMD sudo $XYMONCLIENTHOME/ext/yourcheck.py
+
+By default *sudo* does not preserve the environment variables exported by Xymon.
+To preserve the variables required by *PyXymon*, add the following lines to the sudo configuration for the user *xymon*.
+
+```
+ Defaults env_keep += "XYMSRV"
+ Defaults env_keep += "XYMONDPORT"
+ Defaults env_keep += "MACHINE"
+```
