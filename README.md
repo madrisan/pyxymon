@@ -19,7 +19,7 @@ Create a script `yourcheck.py` using the following schema:
 #!/usr/bin/python
 
 import os
-import os
+import sys
 import pyxymon as pymon
 
 test = 'yourcheck'
@@ -55,7 +55,7 @@ if __name__ == '__main__':
 Configure your extention module in the file `$XYMONCLIENTHOME/etc/xymonclient.cfg`.
 
 ```
-[pacemaker]
+[yourcheck]
         ENVFILE $XYMONCLIENTHOME/etc/xymonclient.cfg
         CMD $XYMONCLIENTHOME/ext/yourcheck.py
         LOGFILE $XYMONCLIENTLOGS/yourcheck.log
