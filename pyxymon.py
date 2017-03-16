@@ -28,7 +28,7 @@ class XymonMessage(object):
     by the hook variable `XymonClient.msg`.
     """
 
-    OK = '&green'
+    OK = '&green'   # pylint: disable-msg=C0103
     WARNING = '&yellow'
     CRITICAL = '&red'
     __ALL_COLORS__ = (OK, WARNING, CRITICAL)

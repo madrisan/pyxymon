@@ -17,8 +17,8 @@ import sys
 # Import the pyxymon library
 import pyxymon as pymon
 
-xymon_check = 'pacemaker'
-version = (os.path.basename(__file__), '1')
+__check_name__ = 'pacemaker'
+__check_version__ = (os.path.basename(__file__), '1')
 
 def cluster_name():
     """Return the cluster name."""
@@ -63,7 +63,8 @@ def check_cluster_status():
     Check the status of the pacemaker cluster, create and sent the message
     to the xymon server.
     """
-    xymon = pymon.XymonClient(xymon_check)
+    xymon = pymon.XymonClient(__check_name__)
+
     cl_local_node_status = cluster_local_node_status()
     _get_attr = lambda attr: cl_local_node_status.get(attr, 'Unknown')
     node_name = _get_attr('name')
@@ -123,7 +124,7 @@ def check_cluster_status():
         xymon.msg.color(xymon.msg.CRITICAL)
 
     # message - footer
-    xymon.msg.footer(version)
+    xymon.msg.footer(__check_version__)
 
     xymon.send()
 
