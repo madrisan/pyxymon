@@ -75,16 +75,32 @@ class XymonMessage(object):
 class XymonClient(object):
     def __init__(self, test):
         self.test = test
-        self.server = os.environ.get('XYMSRV')
-        self.port = os.environ.get('XYMONDPORT')
+        self.server = self.__get_xymon_server_name()
+        self.port = self.__get_xymon_server_port()
         self.msg = XymonMessage()
+
+    @staticmethod
+    def __get_xymon_server_name():
+        '''
+        Return the Xymon server name by looking at the env variable XYMSRV
+        '''
+        return os.environ.get('XYMSRV')
+
+    @staticmethod
+    def __get_xymon_server_port():
+        '''
+        Return the Xymon server port by looking at the env variable XYMONDPORT
+        or the default port 1984 if such a variable does not exist
+        '''
+        xymon_port = os.environ.get('XYMONDPORT', 1984)
+        return int(xymon_port)
 
     def send(self):
         '''
         Send a message to the xymon server
         '''
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((self.server, int(self.port)))
+        s.connect((self.server, self.port))
         xymon_string = self.msg.render(self.test)
         s.send(xymon_string)
         s.close()
