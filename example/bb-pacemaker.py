@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
 # -*- coding: utf-8 -*-
-'''
+"""
 Module Xymon for monitoring a Pacemaker cluster.
 Copyright (C) 2017 Davide Madrisan <davide.madrisan.gmail.com>
-'''
+"""
 
 # Import python libs
 from pcs import (
@@ -17,33 +17,27 @@ import sys
 # Import the pyxymon library
 import pyxymon as pymon
 
-test = 'pacemaker'
+xymon_check = 'pacemaker'
 version = (os.path.basename(__file__), '1')
 
 def cluster_name():
-    '''
-    Return the cluster name.
-    '''
+    """Return the cluster name."""
     return utils.getClusterName()
 
 def cluster_local_node_status():
-    '''
-    Return the status of the local cluster member.
-    '''
+    """Return the status of the local cluster member."""
     try:
         node_status = lib_pacemaker.get_local_node_status(
             utils.cmd_runner()
         )
-    except LibraryError as e:
+    except LibraryError as exc:
         raise RuntimeError('Unable to get node status: {0}'.format(
-            '\n'.join([item.message for item in e.args]))
+            '\n'.join([item.message for item in exc.args]))
         )
     return node_status
 
 def cluster_resources():
-    '''
-    Return the status of the local resources.
-    '''
+    """Return the status of the local resources."""
     info_dom = utils.getClusterState()
     resources = info_dom.getElementsByTagName('resources')
     if resources.length == 0:
@@ -65,11 +59,11 @@ def cluster_resources():
         for resource in resources[0].getElementsByTagName('resource'))
 
 def check_cluster_status():
-    '''
+    """
     Check the status of the pacemaker cluster, create and sent the message
     to the xymon server.
-    '''
-    xymon = pymon.XymonClient(test)
+    """
+    xymon = pymon.XymonClient(xymon_check)
     cl_local_node_status = cluster_local_node_status()
     _get_attr = lambda attr: cl_local_node_status.get(attr, 'Unknown')
     node_name = _get_attr('name')
@@ -134,6 +128,7 @@ def check_cluster_status():
     xymon.send()
 
 def main():
+    """Main function"""
     check_cluster_status()
 
 if __name__ == '__main__':

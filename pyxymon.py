@@ -27,14 +27,18 @@ class XymonMessage(object):
     This class is not intended to be used directly from your code but
     by the hook variable `XymonClient.msg`.
     """
+
+    OK = '&green'
+    WARNING = '&yellow'
+    CRITICAL = '&red'
+    __ALL_COLORS__ = (OK, WARNING, CRITICAL)
+
     def __init__(self):
         self.__message = ''
+
         self.__footer = None
-        self.OK = '&green'
-        self.WARNING = '&yellow'
-        self.CRITICAL = '&red'
-        self.__all_colors = [self.OK, self.WARNING, self.CRITICAL]
         """list of all the allower colors (criticity levels)"""
+
         self.message_color = self.OK
         """default criticity"""
 
@@ -54,10 +58,10 @@ class XymonMessage(object):
         Note that the color is not updated when `new_colo` has a criticity
         lower than the global `message_color`.
         """
-        if new_color not in self.__all_colors:
+        if new_color not in self.__ALL_COLORS__:
             raise RuntimeError('Illegal color for xymon: {0}'.format(new_color))
-        current_color_index = self.__all_colors.index(self.message_color)
-        new_color_index = self.__all_colors.index(new_color)
+        current_color_index = self.__ALL_COLORS__.index(self.message_color)
+        new_color_index = self.__ALL_COLORS__.index(new_color)
         if new_color_index > current_color_index:
             self.message_color = new_color
 
@@ -87,7 +91,7 @@ class XymonMessage(object):
         """
         date = self.__get_date()
         machine = self.__get_machine()
-        if self.message_color not in self.__all_colors:
+        if self.message_color not in self.__ALL_COLORS__:
             raise RuntimeError(
                 'Illegal color for xymon: {0}'.format(self.message_color))
         html = (self.__message if not self.__footer else
@@ -100,7 +104,7 @@ class XymonClient(object):
     Class for managing and sending the final message to the Xymon server.
 
     Usage:
-        xymon = pymon.XymonClient(test)
+        xymon = pymon.XymonClient(check_name)
 
         # do your logic...
         # you can set the criticity of the final xymon message by using:
@@ -113,7 +117,7 @@ class XymonClient(object):
         xymon.msg.section('Section Title',
                           'Text containing the lines you want to display')
         # You can add here other sections, if required.
-        xymon.msg.footer(version)
+        xymon.msg.footer(check_version)
         xymon.send()
     """
     def __init__(self, test):
@@ -144,8 +148,8 @@ class XymonClient(object):
 
     def send(self):
         """Send a rendered message to the xymon server."""
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((self.server, self.port))
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((self.server, self.port))
         xymon_string = self.msg.render(self.test)
-        s.send(xymon_string)
-        s.close()
+        sock.send(xymon_string)
+        sock.close()
