@@ -72,10 +72,10 @@ with the `sudo` command:
         CMD sudo $XYMONCLIENTHOME/ext/yourcheck.py
 
 By default *sudo* does not preserve the environment variables exported by Xymon.
-To preserve the variables required by *PyXymon*, add the following lines to the sudo configuration for the user *xymon*.
+To preserve the variables required by *PyXymon*, add the following lines to the *sudo* configuration:
 
 ```
- Defaults env_keep += "XYMSRV"
- Defaults env_keep += "XYMONDPORT"
- Defaults env_keep += "MACHINE"
+ Defaults env_keep:xymon += "XYMSRV"
+ Defaults env_keep:xymon += "XYMONDPORT"
+ Defaults env_keep:xymon += "MACHINE"
 ```
