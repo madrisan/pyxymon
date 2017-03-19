@@ -5,6 +5,8 @@ Simple Helper Class intended for creation of Xymon Extension Modules in Python.
 
 This Python module provides a simple class that aims simplify the creation of
 Xymon Extension Modules in Python.
+
+SPDX-License-Identifier: GPL-3.0
 """
 
 __author__ = "Davide Madrisan <davide.madrisan.gmail.com>"
