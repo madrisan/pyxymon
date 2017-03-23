@@ -175,7 +175,6 @@ def check_resource_groups_status(
     if not resource_group_required:
         return True
 
-    node_resources_names = node_resources.keys()
     groups = list(group for group in resource_groups
         for resource in node_resources if resource in resource_groups[group])
 
