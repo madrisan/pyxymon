@@ -33,15 +33,16 @@ def run_check():
 
     # do your logic...
     # you can set the criticity of the final xymon message by using:
-    #    xymon.msg.color(xymon.msg.WARNING)
+    #    xymon.set_color(xymon.STATUS_WARNING)
     # or
-    #    xymon.msg.color(xymon.msg.CRITICAL)
-    # The default criticity is 'xymon.msg.OK' 
+    #    xymon.set_color(xymon.STATUS_CRITICAL)
+    # The default criticity is 'xymon.COLOR_OK' 
     
-    xymon.msg.title('Title in the xymon check page')
-    xymon.msg.section('Section Title', 'Text containing the lines you want to display')
+    xymon.title('Title in the xymon check page')
+    xymon.section('Section Title',
+                  'Text containing the lines you want to display')
     # You can add here other sections, if required.
-    xymon.msg.footer(check_version)
+    xymon.footer(check_version)
     xymon.send()
 
 def main():
