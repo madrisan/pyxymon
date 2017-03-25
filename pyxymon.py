@@ -91,7 +91,7 @@ class XymonMessage(object):
             raise RuntimeError(
                 'Illegal color for xymon: {0}'.format(self.message_color))
         html = (self.__message if not self.__footer else
-            self.__message + self.__footer)
+                self.__message + self.__footer)
         return 'status {0}.{1} {2} {3}\n{4}\n'.format(
             machine, test, self.message_color[1:], date, html)
 
