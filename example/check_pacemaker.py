@@ -27,8 +27,6 @@ import os
 import sys
 import pyxymon as pymon
 
-__check_version__ = (os.path.basename(__file__), __version__)
-
 def die(message, exitcode=1):
     """Print an error message and exit with 'exitcode'"""
     progname = sys.argv[0]
@@ -276,7 +274,8 @@ def check_cluster_status(test_name, resource_groups_cfg_map, check_daemons):
             xymon.color = pymon.STATUS_CRITICAL
 
     # message - footer
-    xymon.footer(__check_version__)
+    check_script = os.path.basename(__file__)
+    xymon.footer(check_script, __version__)
 
     xymon.send()
 

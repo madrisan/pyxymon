@@ -22,12 +22,13 @@ import os
 import sys
 import pyxymon as pymon
 
-check_name = 'yourcheck'
-check_version = (os.path.basename(__file__), '1')
+CHECK_NAME = 'yourcheck'
+CHECK_VERSION = 1
 
 def run_check():
     """Check the status of whatever you want..."""
-    xymon = pymon.XymonClient(check_name)
+    xymon = pymon.XymonClient(CHECK_NAME)
+    check_script = os.path.basename(__file__)
     # do your logic...
     # you can set the criticity of the final xymon message by using:
     #    xymon.color = pymon.STATUS_WARNING
@@ -38,7 +39,7 @@ def run_check():
     xymon.section('Section Title',
                   'Text containing the lines you want to display')
     # You can add here other sections, if required.
-    xymon.footer(check_version)
+    xymon.footer(check_script, CHECK_VERSION)
     xymon.send()
 
 def main():

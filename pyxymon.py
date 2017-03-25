@@ -102,16 +102,17 @@ class XymonMessage(object):
         self._message += (
             '<h2>{0}</h2><p>{1}</p><br>'.format(title, body))
 
-    def footer(self, version):
+    def footer(self, check_filename, check_version):
         """Add a footer the the Xymon message.
 
         Attributes:
-            version (str): Usually the script name with version.
+            check_filename (str): The name of the check script.
+            check_version (str): The version of the check script.
         """
         self._footer = (
             '<br>'
             '<center>xymon script: {0} version {1}</center>'.format(
-                *version))
+                check_filename, check_version))
 
     def _render(self, test):
         """Return the message string in a format accepted by the Xymon server.
@@ -140,8 +141,11 @@ class XymonClient(XymonMessage):
         test (str): Name of the Xymon test.
 
     Usage:
+        import os
         import pyxymon as pymon
         check_name = 'mytest'
+        check_version = 1
+        check_filename = os.path.basename(__file__)
         xymon = pymon.XymonClient(check_name)
         # do your logic...
         # you can set the criticity of the final xymon message by using:
@@ -153,7 +157,7 @@ class XymonClient(XymonMessage):
         xymon.section('Section Title',
                       'Text containing the lines you want to display')
         # You can add here other sections, if required.
-        xymon.footer(check_version)
+        xymon.footer(check_filename, check_version)
         xymon.send()
     """
     def __init__(self, test):
