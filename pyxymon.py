@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-"""
-Simple Helper Class intended for creation of Xymon Extension Modules in Python.
+"""Helper class intended for creation of Xymon Extension Modules in Python.
 
-This Python module provides a simple class that aims simplify the creation of
-Xymon Extension Modules in Python.
+This simple Python module provides a simple helper class that aims simplify
+ the creation of Xymon Extension Modules in Python.
 """
 
 __author__ = "Davide Madrisan <davide.madrisan.gmail.com>"
@@ -28,11 +27,10 @@ _ALL_COLORS = (STATUS_OK, STATUS_WARNING, STATUS_CRITICAL)
 """list of all the allower colors (criticity levels)"""
 
 class XymonMessage(object):
-    """
-    Private class for rendering the message that will be sent to the
-    Xymon server.
+    """Class for rendering the Xymon messages that will be sent to the server.
 
-    This class is not intended to be used directly from your code.
+    Note:
+        This class is not intended to be used directly from your code.
     """
     def __init__(self):
         self._message = ''
@@ -57,8 +55,7 @@ class XymonMessage(object):
 
     @color.setter
     def color(self, value):
-        """
-        Set the color (message criticity level) to `value`.
+        """Set the color (message criticity level) to `value`.
 
         Note:
             The color is not updated when `value` has a criticity
@@ -110,8 +107,7 @@ class XymonMessage(object):
                 *version))
 
     def _render(self, test):
-        """
-        Return the message string in a format accepted by the xymon server.
+        """Return the message string in a format accepted by the Xymon server.
 
         Attributes:
             test (str): The string containing the name of the Xymon test.
@@ -127,8 +123,7 @@ class XymonMessage(object):
             machine, test, self._color[1:], date, html)
 
 class XymonClient(XymonMessage):
-    """
-    Class for managing and sending the final message to the Xymon server.
+    """Class for managing and sending the final message to the Xymon server.
 
     Attributes:
         test (str): Name of the Xymon test.
@@ -157,9 +152,7 @@ class XymonClient(XymonMessage):
 
     @staticmethod
     def _get_xymon_server_name():
-        """
-        Return the Xymon server name by looking at the env variable XYMSRV.
-        """
+        """Return the content of the environment variable XYMSRV."""
         xymon_server = os.environ.get('XYMSRV')
         if not xymon_server:
             RuntimeError('The environment variable XYMSRV is not set')
@@ -167,9 +160,11 @@ class XymonClient(XymonMessage):
 
     @staticmethod
     def _get_xymon_server_port():
-        """
-        Return the Xymon server port by looking at the env variable XYMONDPORT
-        or the default port 1984 if such a variable does not exist.
+        """Return the content of the environment variable XYMONDPORT.
+
+        Note:
+            The default Xymon port (1984) is returned, when such a variable
+            does not exist.
         """
         xymon_port = os.environ.get('XYMONDPORT', 1984)
         return int(xymon_port)
