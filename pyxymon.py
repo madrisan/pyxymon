@@ -149,10 +149,10 @@ class XymonClient(object):
 
     def send(self):
         """Send a rendered message to the xymon server."""
-        self.server = self._get_xymon_server_name()
-        self.port = self._get_xymon_server_port()
+        server = self._get_xymon_server_name()
+        port = self._get_xymon_server_port()
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((self.server, self.port))
+        sock.connect((server, port))
         xymon_string = self._msg.render(self.test)
         sock.send(xymon_string)
         sock.close()
