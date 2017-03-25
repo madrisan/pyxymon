@@ -63,7 +63,7 @@ Configure your extention module in the file `$XYMONCLIENTHOME/etc/xymonclient.cf
         INTERVAL 10m
 ```
 
-You can find a full example [here](example/bb-pacemaker.py).
+You can find a full example [here](example/check_pacemaker.py).
 
 ## Note
 
