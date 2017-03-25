@@ -240,7 +240,7 @@ def check_cluster_status(test_name, resource_groups_cfg_map, check_daemons):
     xymon.section(
         'Node Status',
         '{0} - {1} {2}'.format(node_name, node_status, node_color))
-    xymon.set_color(node_color)
+    xymon.color = node_color
 
     # message - cluster nodes
     nodes = sorted(cluster_nodes())
@@ -259,7 +259,7 @@ def check_cluster_status(test_name, resource_groups_cfg_map, check_daemons):
         resources_summary, resources_list_with_status))
     if not all([item.split()[0] == pymon.STATUS_OK \
                 for item in resources_list_with_status.splitlines()]):
-        xymon.set_color(pymon.STATUS_CRITICAL)
+        xymon.color = pymon.STATUS_CRITICAL
 
     # message - daemons status
     if check_daemons:
@@ -273,7 +273,7 @@ def check_cluster_status(test_name, resource_groups_cfg_map, check_daemons):
             ''.join(service_status(service) for service in cluster_services))
         if not all(status.is_service_running(service)
                    for service in cluster_services):
-            xymon.set_color(pymon.STATUS_CRITICAL)
+            xymon.color = pymon.STATUS_CRITICAL
 
     # message - footer
     xymon.footer(__check_version__)

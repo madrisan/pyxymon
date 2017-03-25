@@ -11,7 +11,7 @@ __author__ = "Davide Madrisan <davide.madrisan.gmail.com>"
 __copyright__ = "Copyright 2017 Davide Madrisan"
 __license__ = "GPL-3.0"
 __status__ = "Stable"
-__version__ = "2"
+__version__ = "3"
 
 STATUS_OK = '&green'
 STATUS_WARNING = '&yellow'
@@ -32,14 +32,12 @@ class XymonMessage(object):
     Private class for rendering the message that will be sent to the
     Xymon server.
 
-    This class is not intended to be used directly from your code but
-    by the hook variable `XymonClient.msg`.
+    This class is not intended to be used directly from your code.
     """
     def __init__(self):
-        self.__message = ''
-        self.__footer = None
-
-        self.message_color = STATUS_OK
+        self._message = ''
+        self._footer = None
+        self._color = STATUS_OK
         """default criticity"""
 
     @staticmethod
@@ -52,90 +50,119 @@ class XymonMessage(object):
         """Get the environment variable `MACHINE` exported by Xymon."""
         return os.environ.get('MACHINE')
 
-    def set_color(self, new_color):
+    @property
+    def color(self):
+        """Return the current color (message criticity level)."""
+        return self._color
+
+    @color.setter
+    def color(self, value):
         """
-        Set the color (message criticity level) to `new_color`.
-        Note that the color is not updated when `new_colo` has a criticity
-        lower than the global `message_color`.
+        Set the color (message criticity level) to `value`.
+
+        Note:
+            The color is not updated when `value` has a criticity
+            lower than the current one `self._color`.
+
+        Attributes:
+            value (str): The new color to be set.
+                         The following colors are the only valid ones:
+                           - pyxymon.STATUS_OK
+                           - pyxymon.STATUS_WARNING
+                           - pyxymon.STATUS_CRITICAL
+        Raises:
+            ValueError: If `value` is not a valid color string.
         """
-        if new_color not in _ALL_COLORS:
-            raise RuntimeError('Illegal color for xymon: {0}'.format(new_color))
-        current_color_index = _ALL_COLORS.index(self.message_color)
-        new_color_index = _ALL_COLORS.index(new_color)
+        if value not in _ALL_COLORS:
+            raise ValueError('Illegal color for xymon: {0}'.format(value))
+        current_color_index = _ALL_COLORS.index(self._color)
+        new_color_index = _ALL_COLORS.index(value)
         if new_color_index > current_color_index:
-            self.message_color = new_color
+            self._color = value
 
     def title(self, text):
-        """Set the message title, rendered in HTML."""
-        self.__message += '<br><h1>{0}</h1><hr><br>'.format(text)
+        """Set the message title.
+
+        Attributes:
+            text (str): The string containing the title.
+        """
+        self._message += '<br><h1>{0}</h1><hr><br>'.format(text)
 
     def section(self, title, body):
-        """Renders a section in HTML, with `title` and content `body`."""
-        self.__message += (
+        """Add a section to the Xymon message.
+
+        Attributes:
+            title (str): The string containing the title of this section.
+            body (str): The content of the section.
+        """
+        self._message += (
             '<h2>{0}</h2><p>{1}</p><br>'.format(title, body))
 
     def footer(self, version):
-        """Set the message footer (script name and version)."""
-        self.__footer = (
+        """Add a footer the the Xymon message.
+
+        Attributes:
+            version (str): Usually the script name with version.
+        """
+        self._footer = (
             '<br>'
             '<center>xymon script: {0} version {1}</center>'.format(
                 *version))
 
-    def render(self, test):
+    def _render(self, test):
         """
         Return the message string in a format accepted by the xymon server.
+
+        Attributes:
+            test (str): The string containing the name of the Xymon test.
         """
         date = self._get_date()
         machine = self._get_machine()
-        if self.message_color not in _ALL_COLORS:
+        if self._color not in _ALL_COLORS:
             raise RuntimeError(
-                'Illegal color for xymon: {0}'.format(self.message_color))
-        html = (self.__message if not self.__footer else
-                self.__message + self.__footer)
+                'Illegal color for xymon: {0}'.format(self._color))
+        html = (self._message if not self._footer else
+                self._message + self._footer)
         return 'status {0}.{1} {2} {3}\n{4}\n'.format(
-            machine, test, self.message_color[1:], date, html)
+            machine, test, self._color[1:], date, html)
 
-class XymonClient(object):
+class XymonClient(XymonMessage):
     """
     Class for managing and sending the final message to the Xymon server.
 
+    Attributes:
+        test (str): Name of the Xymon test.
+
     Usage:
         import pyxymon as pymon
-
+        check_name = 'mytest'
         xymon = pymon.XymonClient(check_name)
-
         # do your logic...
         # you can set the criticity of the final xymon message by using:
-        #    xymon.set_color(pymon.STATUS_WARNING)
+        #    xymon.color = pymon.STATUS_WARNING
         # or
-        #    xymon.set_color(pymon.STATUS_CRITICAL)
-        # The default criticity is 'pymon.STATUS_OK'
-
-        xymon.msg.title('Title in the xymon check page')
-        xymon.msg.section('Section Title',
-                          'Text containing the lines you want to display')
+        #    xymon.color = pymon.STATUS_CRITICAL
+        # The criticity is set by default to 'pymon.STATUS_OK'
+        xymon.title('Title in the xymon check page')
+        xymon.section('Section Title',
+                      'Text containing the lines you want to display')
         # You can add here other sections, if required.
-        xymon.msg.footer(check_version)
+        xymon.footer(check_version)
         xymon.send()
     """
     def __init__(self, test):
+        XymonMessage.__init__(self)
         self.test = test
         """Name of the Xymon test"""
-
-        self._msg = XymonMessage()
-        """Xymon message hook"""
-
-        self.set_color = self._msg.set_color
-        self.title = self._msg.title
-        self.section = self._msg.section
-        self.footer = self._msg.footer
-        """Provide the methods available in XymonMessage"""
 
     @staticmethod
     def _get_xymon_server_name():
         """
         Return the Xymon server name by looking at the env variable XYMSRV.
         """
+        xymon_server = os.environ.get('XYMSRV')
+        if not xymon_server:
+            RuntimeError('The environment variable XYMSRV is not set')
         return os.environ.get('XYMSRV')
 
     @staticmethod
@@ -148,11 +175,16 @@ class XymonClient(object):
         return int(xymon_port)
 
     def send(self):
-        """Send a rendered message to the xymon server."""
+        """Send a rendered message to the xymon server.
+
+        Note:
+            The server and port are read from the environment variables
+            XYMSRV and XYMONDPORT (default set to 1984 when not found).
+        """
         server = self._get_xymon_server_name()
         port = self._get_xymon_server_port()
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((server, port))
-        xymon_string = self._msg.render(self.test)
+        xymon_string = self._render(self.test)
         sock.send(xymon_string)
         sock.close()
