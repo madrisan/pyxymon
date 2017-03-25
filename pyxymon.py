@@ -45,8 +45,15 @@ class XymonMessage(object):
 
     @staticmethod
     def _get_machine():
-        """Get the environment variable `MACHINE` exported by Xymon."""
-        return os.environ.get('MACHINE')
+        """Get the environment variable `MACHINE` exported by Xymon.
+
+        Raises:
+            RuntimeError: If `MACHINE` is not set.
+        """
+        xymon_machine = os.environ.get('MACHINE')
+        if not xymon_machine:
+            raise RuntimeError('The environment variable MACHINE is not set')
+        return xymon_machine
 
     @property
     def color(self):
@@ -111,6 +118,10 @@ class XymonMessage(object):
 
         Attributes:
             test (str): The string containing the name of the Xymon test.
+
+        Raises:
+            RuntimeError: If `self._color` is an illegal color
+                          (this should never happen).
         """
         date = self._get_date()
         machine = self._get_machine()
@@ -152,7 +163,11 @@ class XymonClient(XymonMessage):
 
     @staticmethod
     def _get_xymon_server_name():
-        """Return the content of the environment variable XYMSRV."""
+        """Return the content of the environment variable XYMSRV.
+
+        Raises:
+            RuntimeError: If `XYMSRV` is not set.
+        """
         xymon_server = os.environ.get('XYMSRV')
         if not xymon_server:
             RuntimeError('The environment variable XYMSRV is not set')
