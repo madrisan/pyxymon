@@ -26,18 +26,14 @@ check_name = 'yourcheck'
 check_version = (os.path.basename(__file__), '1')
 
 def run_check():
-    '''
-    Check the status of whatever you want...
-    '''
+    """Check the status of whatever you want..."""
     xymon = pymon.XymonClient(check_name)
-
     # do your logic...
     # you can set the criticity of the final xymon message by using:
-    #    xymon.set_color(xymon.STATUS_WARNING)
+    #    xymon.color = pymon.STATUS_WARNING
     # or
-    #    xymon.set_color(xymon.STATUS_CRITICAL)
-    # The default criticity is 'xymon.COLOR_OK' 
-    
+    #    xymon.color = pymon.STATUS_CRITICAL
+    # The default criticity is set to 'pymon.STATUS_OK' 
     xymon.title('Title in the xymon check page')
     xymon.section('Section Title',
                   'Text containing the lines you want to display')
