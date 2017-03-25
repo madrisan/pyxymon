@@ -235,8 +235,8 @@ def check_cluster_status(test_name, resource_groups_cfg_map, check_daemons):
         'Pacemaker cluster "{0}"'.format(cluster_name))
 
     # message - cluster node status
-    node_color = (xymon.STATUS_OK if node_status == 'online'
-        else xymon.STATUS_CRITICAL)
+    node_color = (pymon.STATUS_OK if node_status == 'online'
+        else pymon.STATUS_CRITICAL)
     xymon.section(
         'Node Status',
         '{0} - {1} {2}'.format(node_name, node_status, node_color))
@@ -251,29 +251,29 @@ def check_cluster_status(test_name, resource_groups_cfg_map, check_daemons):
         '{c[resources_running]} resources running:\n\n'.format(
             c=cluster_infos))
     resources_color = lambda v: \
-        xymon.STATUS_OK if v.get('role') == 'Started' else xymon.STATUS_CRITICAL
+        pymon.STATUS_OK if v.get('role') == 'Started' else pymon.STATUS_CRITICAL
     resources_list_with_status = '\n'.join(' {0} {1:<22} {2}'.format(
         resources_color(v), k, v.get('resource_agent'))
              for k,v in cluster_infos['node_resources'].items())
     xymon.section('Cluster Resources', '{0}{1}'.format(
         resources_summary, resources_list_with_status))
-    if not all([item.split()[0] == xymon.STATUS_OK \
+    if not all([item.split()[0] == pymon.STATUS_OK \
                 for item in resources_list_with_status.splitlines()]):
-        xymon.set_color(xymon.STATUS_CRITICAL)
+        xymon.set_color(pymon.STATUS_CRITICAL)
 
     # message - daemons status
     if check_daemons:
         cluster_services = ['corosync', 'pacemaker', 'pcsd']
         service_status = lambda service: ' {0} service {1:<14} {2}\n'.format(
-            *((xymon.STATUS_OK, service, 'active')
+            *((pymon.STATUS_OK, service, 'active')
                 if status.is_service_running(service)
-                else (xymon.STATUS_CRITICAL, service, 'inactive')))
+                else (pymon.STATUS_CRITICAL, service, 'inactive')))
         xymon.section(
             'Daemon Status',\
             ''.join(service_status(service) for service in cluster_services))
         if not all(status.is_service_running(service)
                    for service in cluster_services):
-            xymon.set_color(xymon.STATUS_CRITICAL)
+            xymon.set_color(pymon.STATUS_CRITICAL)
 
     # message - footer
     xymon.footer(__check_version__)

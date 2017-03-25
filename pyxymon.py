@@ -13,11 +13,19 @@ __license__ = "GPL-3.0"
 __status__ = "Stable"
 __version__ = "2"
 
+STATUS_OK = '&green'
+STATUS_WARNING = '&yellow'
+STATUS_CRITICAL = '&red'
+
+__all__ = ['XymonClient',
+           'STATUS_OK', 'STATUS_WARNING', 'STATUS_CRITICAL']
+
 from datetime import datetime
 import os
 import socket
 
-__all__ = ['XymonClient']
+_ALL_COLORS = (STATUS_OK, STATUS_WARNING, STATUS_CRITICAL)
+"""list of all the allower colors (criticity levels)"""
 
 class XymonMessage(object):
     """
@@ -31,15 +39,7 @@ class XymonMessage(object):
         self.__message = ''
         self.__footer = None
 
-        self.COLOR_OK = '&green'
-        self.COLOR_WARNING = '&yellow'
-        self.COLOR_CRITICAL = '&red'
-
-        self._ALL_COLORS = (
-            self.COLOR_OK, self.COLOR_WARNING, self.COLOR_CRITICAL)
-        """list of all the allower colors (criticity levels)"""
-
-        self.message_color = self.COLOR_OK
+        self.message_color = STATUS_OK
         """default criticity"""
 
     @staticmethod
@@ -58,10 +58,10 @@ class XymonMessage(object):
         Note that the color is not updated when `new_colo` has a criticity
         lower than the global `message_color`.
         """
-        if new_color not in self._ALL_COLORS:
+        if new_color not in _ALL_COLORS:
             raise RuntimeError('Illegal color for xymon: {0}'.format(new_color))
-        current_color_index = self._ALL_COLORS.index(self.message_color)
-        new_color_index = self._ALL_COLORS.index(new_color)
+        current_color_index = _ALL_COLORS.index(self.message_color)
+        new_color_index = _ALL_COLORS.index(new_color)
         if new_color_index > current_color_index:
             self.message_color = new_color
 
@@ -87,7 +87,7 @@ class XymonMessage(object):
         """
         date = self._get_date()
         machine = self._get_machine()
-        if self.message_color not in self._ALL_COLORS:
+        if self.message_color not in _ALL_COLORS:
             raise RuntimeError(
                 'Illegal color for xymon: {0}'.format(self.message_color))
         html = (self.__message if not self.__footer else
@@ -100,14 +100,16 @@ class XymonClient(object):
     Class for managing and sending the final message to the Xymon server.
 
     Usage:
+        import pyxymon as pymon
+
         xymon = pymon.XymonClient(check_name)
 
         # do your logic...
         # you can set the criticity of the final xymon message by using:
-        #    xymon.set_color(xymon.STATUS_WARNING)
+        #    xymon.set_color(pymon.STATUS_WARNING)
         # or
-        #    xymon.set_color(xymon.STATUS_CRITICAL)
-        # The default criticity is 'xymon.COLOR_OK'
+        #    xymon.set_color(pymon.STATUS_CRITICAL)
+        # The default criticity is 'pymon.STATUS_OK'
 
         xymon.msg.title('Title in the xymon check page')
         xymon.msg.section('Section Title',
@@ -122,10 +124,6 @@ class XymonClient(object):
 
         self._msg = XymonMessage()
         """Xymon message hook"""
-
-        self.STATUS_OK = self._msg.COLOR_OK
-        self.STATUS_WARNING = self._msg.COLOR_WARNING
-        self.STATUS_CRITICAL = self._msg.COLOR_CRITICAL
 
         self.set_color = self._msg.set_color
         self.title = self._msg.title
