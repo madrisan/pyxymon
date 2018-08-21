@@ -36,6 +36,7 @@ class XymonMessage(object):
         self._message = ''
         self._footer = None
         self._color = STATUS_OK
+        self._lifetime = None
         """default criticity"""
 
     @staticmethod
@@ -84,6 +85,19 @@ class XymonMessage(object):
         if new_color_index > current_color_index:
             self._color = value
 
+    @property
+    def lifetime(self):
+        """Return lifetime in minutes in xymon format (str)"""
+        return ''.join(['+', str(self._lifetime)]) if self._lifetime else ''
+
+    @lifetime.setter
+    def lifetime(self, value):
+        """Set the lifetime in minutes (time until purple) to `value`"""
+        try:
+            self._lifetime = int(value)
+        except ValueError:
+            raise ValueError('value must be a number: {0}'.format(value))
+
     def title(self, text):
         """Set the message title.
 
@@ -131,8 +145,8 @@ class XymonMessage(object):
                 'Illegal color for xymon: {0}'.format(self._color))
         html = (self._message if not self._footer else
                 self._message + self._footer)
-        return 'status {0}.{1} {2} {3}\n{4}\n'.format(
-            machine, test, self._color[1:], date, html)
+        return 'status{0} {1}.{2} {3} {4}\n{5}\n'.format(
+            self.lifetime, machine, test, self._color[1:], date, html)
 
 class XymonClient(XymonMessage):
     """Class for managing and sending the final message to the Xymon server.
@@ -200,5 +214,5 @@ class XymonClient(XymonMessage):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((server, port))
         xymon_string = self._render(self.test)
-        sock.send(xymon_string)
+        sock.send(xymon_string.encode('utf-8'))
         sock.close()

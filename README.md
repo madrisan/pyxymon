@@ -36,6 +36,8 @@ def run_check():
     # or
     #    xymon.color = pymon.STATUS_CRITICAL
     # The default criticity is set to 'pymon.STATUS_OK' 
+    # Optionally you can set the LIFETIME (in minutes) using:
+    #    xymon.lifetime = 15
     xymon.title('Title in the xymon check page')
     xymon.section('Section Title',
                   'Text containing the lines you want to display')
