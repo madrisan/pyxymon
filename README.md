@@ -53,7 +53,7 @@ if __name__ == '__main__':
     sys.exit(0)
 ```
 
-Configure your extention module in the file `$XYMONCLIENTHOME/etc/xymonclient.cfg`.
+Configure your extension module in the file `$XYMONCLIENTHOME/etc/xymonclient.cfg`.
 
 ```
 [yourcheck]
