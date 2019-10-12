@@ -188,7 +188,7 @@ class XymonClient(XymonMessage):
         """
         xymon_server = os.environ.get('XYMSRV')
         if not xymon_server:
-            RuntimeError('The environment variable XYMSRV is not set')
+            raise RuntimeError('The environment variable XYMSRV is not set')
         return os.environ.get('XYMSRV')
 
     @staticmethod
