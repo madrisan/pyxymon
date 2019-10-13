@@ -1,6 +1,8 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3df5f854b1e44e65a1c3fc5331d4043f)](https://www.codacy.com/app/madrisan/pyxymon?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=madrisan/pyxymon&amp;utm_campaign=Badge_Grade)
 [![Code Climate](https://codeclimate.com/github/madrisan/pyxymon/badges/gpa.svg)](https://codeclimate.com/github/madrisan/pyxymon)
 [![License](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://spdx.org/licenses/GPL-3.0.html)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/madrisan/pyxymon.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/madrisan/pyxymon/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/madrisan/pyxymon.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/madrisan/pyxymon/context:python)
 
 # PyXymon
 
