@@ -12,7 +12,7 @@ __all__ = ['XymonClient',
 __author__ = "Davide Madrisan <davide.madrisan.gmail.com>"
 __copyright__ = "Copyright 2017 Davide Madrisan"
 __license__ = "GPL-3.0"
-__status__ = "Stable"
+__status__ = "Production"
 __version__ = "3"
 
 from datetime import datetime
