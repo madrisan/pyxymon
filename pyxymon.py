@@ -6,22 +6,22 @@ This simple Python module provides a simple helper class that aims simplify
  the creation of Xymon Extension Modules in Python.
 """
 
+__all__ = ['XymonClient',
+           'STATUS_OK', 'STATUS_WARNING', 'STATUS_CRITICAL']
+
 __author__ = "Davide Madrisan <davide.madrisan.gmail.com>"
 __copyright__ = "Copyright 2017 Davide Madrisan"
 __license__ = "GPL-3.0"
 __status__ = "Stable"
 __version__ = "3"
 
-STATUS_OK = '&green'
-STATUS_WARNING = '&yellow'
-STATUS_CRITICAL = '&red'
-
-__all__ = ['XymonClient',
-           'STATUS_OK', 'STATUS_WARNING', 'STATUS_CRITICAL']
-
 from datetime import datetime
 import os
 import socket
+
+STATUS_OK = '&green'
+STATUS_WARNING = '&yellow'
+STATUS_CRITICAL = '&red'
 
 _ALL_COLORS = (STATUS_OK, STATUS_WARNING, STATUS_CRITICAL)
 """list of all the allower colors (criticity levels)"""
