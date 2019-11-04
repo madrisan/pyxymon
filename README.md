@@ -12,7 +12,8 @@ PyXymon reads the required informations from the Xymon environment variables, so
 
 ## Installation
 
-Just copy the module `pyxymon.py` in the xymon `ext` directory.
+Just copy the file [`pyxymon.py`](https://raw.githubusercontent.com/madrisan/pyxymon/master/pyxymon.py)
+in the xymon `ext` directory.
 
 ## Usage
 
