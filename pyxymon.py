@@ -181,16 +181,16 @@ class XymonClient(XymonMessage):
 
     @staticmethod
     def _get_xymon_server_name():
-        """Return the content of the environment variable XYMSRV.
+        """Return the content of the environment variable XYMONSERVERS.
 
         Raises:
-            RuntimeError: If `XYMSRV` is not set.
+            RuntimeError: If `XYMONSERVERS` is not set.
         """
-        xymon_server = os.environ.get('XYMSRV')
+        xymon_server = os.environ.get('XYMONSERVERS')
         if not xymon_server:
-            raise RuntimeError('The environment variable XYMSRV is not set')
-        return os.environ.get('XYMSRV')
-
+            RuntimeError('The environment variable XYMONSERVERS is not set')
+        return os.environ.get('XYMONSERVERS')
+     
     @staticmethod
     def _get_xymon_server_port():
         """Return the content of the environment variable XYMONDPORT.
@@ -209,10 +209,11 @@ class XymonClient(XymonMessage):
             The server and port are read from the environment variables
             XYMSRV and XYMONDPORT (default set to 1984 when not found).
         """
-        server = self._get_xymon_server_name()
+        servers = self._get_xymon_server_name().split(' ')
         port = self._get_xymon_server_port()
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((server, port))
         xymon_string = self._render(self.test)
-        sock.send(xymon_string.encode('utf-8'))
-        sock.close()
+        for server in servers:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((server, port))
+            sock.send(xymon_string.encode('utf-8'))
+            sock.close()
