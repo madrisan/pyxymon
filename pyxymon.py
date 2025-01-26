@@ -6,8 +6,7 @@ This simple Python module provides a simple helper class that aims simplify
  the creation of Xymon Extension Modules in Python.
 """
 
-__all__ = ['XymonClient',
-           'STATUS_OK', 'STATUS_WARNING', 'STATUS_CRITICAL']
+__all__ = ["XymonClient", "STATUS_OK", "STATUS_WARNING", "STATUS_CRITICAL"]
 
 __author__ = "Davide Madrisan <davide.madrisan.gmail.com>"
 __copyright__ = "Copyright 2017,2025 Davide Madrisan"
@@ -19,21 +18,23 @@ from datetime import datetime
 import os
 import socket
 
-STATUS_OK = '&green'
-STATUS_WARNING = '&yellow'
-STATUS_CRITICAL = '&red'
+STATUS_OK = "&green"
+STATUS_WARNING = "&yellow"
+STATUS_CRITICAL = "&red"
 
 _ALL_COLORS = (STATUS_OK, STATUS_WARNING, STATUS_CRITICAL)
 """list of all the allower colors (criticity levels)"""
 
-class XymonMessage():
+
+class XymonMessage:
     """Class for rendering the Xymon messages that will be sent to the server.
 
     Note:
         This class is not intended to be used directly from your code.
     """
+
     def __init__(self):
-        self._message = ''
+        self._message = ""
         self._footer = None
         self._color = STATUS_OK
         self._lifetime = None
@@ -42,7 +43,7 @@ class XymonMessage():
     @staticmethod
     def _get_date():
         """Return the current date."""
-        return datetime.now().strftime('%c')
+        return datetime.now().strftime("%c")
 
     @staticmethod
     def _get_machine():
@@ -51,9 +52,9 @@ class XymonMessage():
         Raises:
             RuntimeError: If `MACHINE` is not set.
         """
-        xymon_machine = os.environ.get('MACHINE')
+        xymon_machine = os.environ.get("MACHINE")
         if not xymon_machine:
-            raise RuntimeError('The environment variable MACHINE is not set')
+            raise RuntimeError("The environment variable MACHINE is not set")
         return xymon_machine
 
     @property
@@ -79,7 +80,7 @@ class XymonMessage():
             ValueError: If `value` is not a valid color string.
         """
         if value not in _ALL_COLORS:
-            raise ValueError(f'Illegal color for xymon: {value}')
+            raise ValueError(f"Illegal color for xymon: {value}")
         current_color_index = _ALL_COLORS.index(self._color)
         new_color_index = _ALL_COLORS.index(value)
         if new_color_index > current_color_index:
@@ -88,7 +89,7 @@ class XymonMessage():
     @property
     def lifetime(self):
         """Return lifetime in minutes in xymon format (str)"""
-        return ''.join(['+', str(self._lifetime)]) if self._lifetime else ''
+        return "".join(["+", str(self._lifetime)]) if self._lifetime else ""
 
     @lifetime.setter
     def lifetime(self, value):
@@ -96,7 +97,7 @@ class XymonMessage():
         try:
             self._lifetime = int(value)
         except ValueError as err:
-            raise ValueError(f'value must be a number: {value}') from err
+            raise ValueError(f"value must be a number: {value}") from err
 
     def title(self, text):
         """Set the message title.
@@ -104,7 +105,7 @@ class XymonMessage():
         Attributes:
             text (str): The string containing the title.
         """
-        self._message += f'<br><h1>{text}</h1><hr><br>'
+        self._message += f"<br><h1>{text}</h1><hr><br>"
 
     def section(self, title, body):
         """Add a section to the Xymon message.
@@ -113,8 +114,7 @@ class XymonMessage():
             title (str): The string containing the title of this section.
             body (str): The content of the section.
         """
-        self._message += (
-            f'<h2>{title}</h2><p>{body}</p><br>')
+        self._message += f"<h2>{title}</h2><p>{body}</p><br>"
 
     def footer(self, check_filename, check_version):
         """Add a footer the the Xymon message.
@@ -124,8 +124,8 @@ class XymonMessage():
             check_version (str): The version of the check script.
         """
         self._footer = (
-            '<br>'
-            f'<center>xymon script: {check_filename} version {check_version}</center>'
+            "<br>"
+            f"<center>xymon script: {check_filename} version {check_version}</center>"
         )
 
     def _render(self, test):
@@ -141,11 +141,12 @@ class XymonMessage():
         date = self._get_date()
         machine = self._get_machine()
         if self._color not in _ALL_COLORS:
-            raise RuntimeError(
-                f'Illegal color for xymon: {self._color}')
-        html = (self._message if not self._footer else
-                self._message + self._footer)
-        return f'status{self.lifetime} {machine}.{test} {self._color[1:]} {date}\n{html}\n'
+            raise RuntimeError(f"Illegal color for xymon: {self._color}")
+        html = self._message if not self._footer else self._message + self._footer
+        return (
+            f"status{self.lifetime} {machine}.{test} {self._color[1:]} {date}\n{html}\n"
+        )
+
 
 class XymonClient(XymonMessage):
     """Class for managing and sending the final message to the Xymon server.
@@ -173,6 +174,7 @@ class XymonClient(XymonMessage):
         xymon.footer(check_filename, check_version)
         xymon.send()
     """
+
     def __init__(self, test):
         XymonMessage.__init__(self)
         self.test = test
@@ -185,10 +187,10 @@ class XymonClient(XymonMessage):
         Raises:
             RuntimeError: If `XYMSRV` is not set.
         """
-        xymon_server = os.environ.get('XYMSRV')
+        xymon_server = os.environ.get("XYMSRV")
         if not xymon_server:
-            raise RuntimeError('The environment variable XYMSRV is not set')
-        return os.environ.get('XYMSRV')
+            raise RuntimeError("The environment variable XYMSRV is not set")
+        return os.environ.get("XYMSRV")
 
     @staticmethod
     def _get_xymon_server_port():
@@ -198,7 +200,7 @@ class XymonClient(XymonMessage):
             The default Xymon port (1984) is returned, when such a variable
             does not exist.
         """
-        xymon_port = os.environ.get('XYMONDPORT', 1984)
+        xymon_port = os.environ.get("XYMONDPORT", 1984)
         return int(xymon_port)
 
     def send(self):
@@ -213,5 +215,5 @@ class XymonClient(XymonMessage):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((server, port))
         xymon_string = self._render(self.test)
-        sock.send(xymon_string.encode('utf-8'))
+        sock.send(xymon_string.encode("utf-8"))
         sock.close()
