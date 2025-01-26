@@ -10,7 +10,7 @@ __all__ = ['XymonClient',
            'STATUS_OK', 'STATUS_WARNING', 'STATUS_CRITICAL']
 
 __author__ = "Davide Madrisan <davide.madrisan.gmail.com>"
-__copyright__ = "Copyright 2017 Davide Madrisan"
+__copyright__ = "Copyright 2017,2025 Davide Madrisan"
 __license__ = "GPL-3.0"
 __status__ = "Production"
 __version__ = "3"
@@ -26,7 +26,7 @@ STATUS_CRITICAL = '&red'
 _ALL_COLORS = (STATUS_OK, STATUS_WARNING, STATUS_CRITICAL)
 """list of all the allower colors (criticity levels)"""
 
-class XymonMessage(object):
+class XymonMessage():
     """Class for rendering the Xymon messages that will be sent to the server.
 
     Note:
@@ -79,7 +79,7 @@ class XymonMessage(object):
             ValueError: If `value` is not a valid color string.
         """
         if value not in _ALL_COLORS:
-            raise ValueError('Illegal color for xymon: {0}'.format(value))
+            raise ValueError(f'Illegal color for xymon: {value}')
         current_color_index = _ALL_COLORS.index(self._color)
         new_color_index = _ALL_COLORS.index(value)
         if new_color_index > current_color_index:
@@ -95,8 +95,8 @@ class XymonMessage(object):
         """Set the lifetime in minutes (time until purple) to `value`"""
         try:
             self._lifetime = int(value)
-        except ValueError:
-            raise ValueError('value must be a number: {0}'.format(value))
+        except ValueError as err:
+            raise ValueError(f'value must be a number: {value}') from err
 
     def title(self, text):
         """Set the message title.
@@ -104,7 +104,7 @@ class XymonMessage(object):
         Attributes:
             text (str): The string containing the title.
         """
-        self._message += '<br><h1>{0}</h1><hr><br>'.format(text)
+        self._message += f'<br><h1>{text}</h1><hr><br>'
 
     def section(self, title, body):
         """Add a section to the Xymon message.
@@ -114,7 +114,7 @@ class XymonMessage(object):
             body (str): The content of the section.
         """
         self._message += (
-            '<h2>{0}</h2><p>{1}</p><br>'.format(title, body))
+            f'<h2>{title}</h2><p>{body}</p><br>')
 
     def footer(self, check_filename, check_version):
         """Add a footer the the Xymon message.
@@ -125,8 +125,8 @@ class XymonMessage(object):
         """
         self._footer = (
             '<br>'
-            '<center>xymon script: {0} version {1}</center>'.format(
-                check_filename, check_version))
+            f'<center>xymon script: {check_filename} version {check_version}</center>'
+        )
 
     def _render(self, test):
         """Return the message string in a format accepted by the Xymon server.
@@ -142,11 +142,10 @@ class XymonMessage(object):
         machine = self._get_machine()
         if self._color not in _ALL_COLORS:
             raise RuntimeError(
-                'Illegal color for xymon: {0}'.format(self._color))
+                f'Illegal color for xymon: {self._color}')
         html = (self._message if not self._footer else
                 self._message + self._footer)
-        return 'status{0} {1}.{2} {3} {4}\n{5}\n'.format(
-            self.lifetime, machine, test, self._color[1:], date, html)
+        return f'status{self.lifetime} {machine}.{test} {self._color[1:]} {date}\n{html}\n'
 
 class XymonClient(XymonMessage):
     """Class for managing and sending the final message to the Xymon server.
