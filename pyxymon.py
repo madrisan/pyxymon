@@ -181,16 +181,25 @@ class XymonClient(XymonMessage):
         """Name of the Xymon test"""
 
     @staticmethod
-    def _get_xymon_server_name():
-        """Return the content of the environment variable XYMSRV.
+    def _get_xymon_servers_name():
+        """
+        Return the content of the environment variable XYMSRV or XYMONSERVERS when set
+        (Debian specific).
 
         Raises:
-            RuntimeError: If `XYMSRV` is not set.
+            RuntimeError: If neither `XYMSRV` nor `XYMONSERVERS` are set.
         """
-        xymon_server = os.environ.get("XYMSRV")
-        if not xymon_server:
-            raise RuntimeError("The environment variable XYMSRV is not set")
-        return os.environ.get("XYMSRV")
+        xymonsrv_env = os.environ.get("XYMSRV")
+        xymonservers_env = os.environ.get("XYMONSERVERS")
+
+        if xymonservers_env:
+            return xymonservers_env
+        if xymonsrv_env:
+            return xymonsrv_env
+
+        raise RuntimeError(
+            "Neither the environment variable XYMSRV nor XYMONSERVERS are set"
+        )
 
     @staticmethod
     def _get_xymon_server_port():
@@ -204,16 +213,17 @@ class XymonClient(XymonMessage):
         return int(xymon_port)
 
     def send(self):
-        """Send a rendered message to the xymon server.
+        """Send a rendered message to the xymon servers.
 
         Note:
-            The server and port are read from the environment variables
-            XYMSRV and XYMONDPORT (default set to 1984 when not found).
+            The servers and port are read from the environment variables
+            XYMSRV (or XYMONSERVERS when set) and XYMONDPORT (defaults to 1984).
         """
-        server = self._get_xymon_server_name()
+        servers = self._get_xymon_servers_name().split(' ')
         port = self._get_xymon_server_port()
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((server, port))
         xymon_string = self._render(self.test)
-        sock.send(xymon_string.encode("utf-8"))
-        sock.close()
+        for server in servers:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((server, port))
+            sock.send(xymon_string.encode("utf-8"))
+            sock.close()
